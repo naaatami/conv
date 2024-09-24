@@ -1,5 +1,5 @@
 # Conv
-A unit converter made in C++
+A unit converter made in C++.
 
 ### How to use 
 Conv uses command line arguments. Simply enter your value, unit to convert from, and unit to convert to, like so:
