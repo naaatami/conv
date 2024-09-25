@@ -8,6 +8,7 @@
 
 extern std::vector<std::map<std::string, Unit>> unitList;
 
+// adds all unit maps to unitList
 void initializeUnitMaps();
 
 #endif // MAPPING_H
