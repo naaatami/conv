@@ -3,6 +3,8 @@ A unit converter made in C++.
 It intends to replace my habit of simply searching up every unit conversion on the Internet - why not just do it locally?
 
 ### How to use 
+Download and compile the code with `g++ -o conv main.cpp mapping.cpp`.
+
 Conv uses command line arguments. Simply enter your value, unit to convert from, and unit to convert to, like so:
 
 ```./conv 40 m km```
