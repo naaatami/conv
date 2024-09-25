@@ -1,75 +1,86 @@
 #include <string>
 #include <map>
 #include <iostream>
+#include <vector>
 
-#include "Unit.h"
+#include "unit.h"
+#include "mapping.h"
 
 using namespace std;
 
 double convert(double valueToConvert, Unit &initialUnit, Unit &endUnit);
+int findMapping(string initialUnit, string endUnit);
 
 int main(int argc, char *argv[]) {
-
-    if (argc == 1)
+    if (argc == 3 || argc == 4)
     {
-        cout << "ERROR: No arguments given.\n";
+        initializeUnitMaps();
+
+        double initialValue = stod(argv[1]);
+        string initialUnitString = argv[2];
+        string endUnitString;
+
+        if(argv[3] == string("to") && argv[4])
+        {
+            endUnitString = argv[4];
+        } else {
+            endUnitString = argv[3];
+        }
+
+        int mapIndex = findMapping(initialUnitString, endUnitString);
+        if(mapIndex == -1)
+        {
+            cout << "ERROR: The two units given cannot be converted between.";
+            return 0;
+        }
+
+        Unit initialUnit = unitList[mapIndex].at(initialUnitString);
+        Unit endUnit = unitList[mapIndex].at(endUnitString);
+
+        double endValue = convert(initialValue, initialUnit, endUnit);
+
+        cout << initialValue << " " << initialUnit.unitName << " = " << endValue << " " << endUnit.unitName << "." << endl;
+
         return 0;
-    }
-
-    else if (argc == 2 || argc == 3) {
-        //TODO: if only three arguments given, can list all unit conversions
-        cout << "ERROR: No units given.\n";
-        return 0;
-    }
-
-    if (argc > 5)
-    {
-        cout << "Too many arguments found - extra ones have been ignored.";
-    }
-
-    map<string, Unit> lengthUnits =
-    {
-        {"meter", Unit("meters", 1.0)},
-        {"meters", Unit("meters", 1.0)},
-        {"m", Unit("meters", 1.0)},
-        {"kilometer", Unit("kilometers", 1000.0)},
-        {"kilometers", Unit("kilometers", 1000.0)},
-        {"km", Unit("kilometers", 1000.0)},
-        {"ft", Unit("feet", 0.3048)},
-        {"foot", Unit("feet", 0.3048)},
-        {"feet", Unit("feet", 0.3048)}
-    };
-
-    // map<string, UnitFormula> temperatureUnits =
-    // {
-    //     {"fahrenheit", Unit("celsius",
-    //     {"f",
-    // };
-
-
-    double initialValue = stod(argv[1]);
-    Unit initialUnit = lengthUnits.at(argv[2]);
-    Unit endUnit;
-    if(argv[3] == "to" || argv[4])
-    {
-        endUnit = lengthUnits.at(argv[4]);
     } else {
-        endUnit = lengthUnits.at(argv[3]);
+        cout << "ERROR: Incorrect format." << endl;
     }
-
-    cout << initialValue << endl;
-    cout << initialUnit.unitName << endl;
-    cout << endUnit.unitName << endl;
-
-    double endValue = convert(initialValue, initialUnit, endUnit);
-
-    cout << initialValue << " " << initialUnit.unitName << " is equivalent to " << endValue << " " << endUnit.unitName << "." << endl;
-
-    return 0;
 }
 
 double convert(double valueToConvert, Unit &initialUnit, Unit &endUnit){
     double endValue = valueToConvert * initialUnit.conversionFactor;
     return endValue / endUnit.conversionFactor;
+}
+
+int findMapping(string initialUnit, string endUnit)
+{
+    bool initialAndEndMatch = false;
+    for(int i = 0; i < unitList.size(); i++)
+    {
+        try
+        {
+            unitList[i].at(initialUnit);
+        }
+
+        catch(const std::out_of_range& ex)
+        {
+            continue;
+        }
+
+        try
+        {
+            unitList[i].at(endUnit);
+        }
+
+        catch(const std::out_of_range& ex)
+        {
+            continue;
+        }
+
+        initialAndEndMatch = true;
+        return i;
+    }
+    //better error handling needed here
+    return -1;
 }
 
